@@ -14,7 +14,7 @@ booli_the_boolean2 = False
 booli_the_boolean3 = False
 
 arduino_to_room = {
-    "Clara": "1.14",
+    "Clara": "1.29",
     "Alina": "2.06"
     }
 
