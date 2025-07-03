@@ -4,7 +4,7 @@ from datetime import datetime, time
 import os
 import requests
 
-
+# Hello World
 log_path = "log.txt"
 
 classroom = "undefined"
@@ -69,7 +69,7 @@ def receive_data():
         if now >= time(5, 55) and now <= time(5, 57):
             sende_discord_nachricht("Cheduled rebbot. Rebooting...")
             os.system("sudo reboot")
-            
+
     if now == time(13, 56):
         sende_discord_nachricht("Cheduled update: still running and recieving data")
 
