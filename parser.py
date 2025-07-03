@@ -4,7 +4,7 @@ from datetime import datetime, time
 import os
 import requests
 
-# test
+
 log_path = "log.txt"
 
 classroom = "undefined"
