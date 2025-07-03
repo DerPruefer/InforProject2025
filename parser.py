@@ -69,9 +69,7 @@ def receive_data():
         if now >= time(5, 55) and now <= time(5, 57):
             sende_discord_nachricht("Cheduled rebbot. Rebooting...")
             os.system("sudo reboot")
-        log(f"request rejected due to time restriction: {now}")
-        return jsonify({"status": "error", "message": "Request only allowed between 06:00 and 19:00"}), 403
-
+            
     if now == time(13, 56):
         sende_discord_nachricht("Cheduled update: still running and recieving data")
 
