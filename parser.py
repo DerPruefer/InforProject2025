@@ -9,10 +9,6 @@ log_path = "log.txt"
 
 classroom = "undefined"
 
-booli_the_boolean1 = False
-booli_the_boolean2 = False
-booli_the_boolean3 = False
-
 arduino_to_room = {
     "Clara": "1.29",
     "Alina": "2.06"
@@ -71,29 +67,17 @@ def receive_data():
     log(f"request to save data received from {request.remote_addr}")
     if not (start_time <= now <= end_time):
         if now >= time(5, 55) and now <= time(5, 57):
-            if not booli_the_boolean1:
-                sende_discord_nachricht("Cheduled rebbot. Rebooting...")
-                booli_the_boolean1 = True
+            sende_discord_nachricht("Cheduled rebbot. Rebooting...")
             os.system("sudo reboot")
-        else:
-            booli_the_boolean1 = False
         log(f"request rejected due to time restriction: {now}")
         return jsonify({"status": "error", "message": "Request only allowed between 06:00 and 19:00"}), 403
 
-    if now >= time(13, 55) and now <= time(13, 57):
-        if not booli_the_boolean2:
-            sende_discord_nachricht("Cheduled update: still running and recieving data")
-            booli_the_boolean2 = True
-    else:
-        booli_the_boolean2 = False
+    if now == time(13, 56):
+        sende_discord_nachricht("Cheduled update: still running and recieving data")
 
-    if now >= time(17, 55) and now <= time(17, 57):
-        if not booli_the_boolean3:
-            sende_db_discord()
-            sende_discord_nachricht("Cheduled data base sending ohhh yeah baby")
-            booli_the_boolean3 = True
-    else:
-        booli_the_boolean3 = False
+    if now == time(17, 55):
+        sende_db_discord()
+        sende_discord_nachricht("Cheduled data base sending ohhh yeah baby")
 
     data = request.get_json()
 
