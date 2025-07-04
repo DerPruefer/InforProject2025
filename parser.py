@@ -73,11 +73,6 @@ def receive_data():
     if now == time(13, 56):
         sende_discord_nachricht("Cheduled update: still running and recieving data")
 
-    if now == time(8, 23):
-        sende_db_discord()
-    else:
-        sende_discord_nachricht(f"{now} {time(8, 20)}")
-
     if now == time(17, 55):
         sende_db_discord()
         sende_discord_nachricht("Cheduled data base sending ohhh yeah baby")
