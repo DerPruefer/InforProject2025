@@ -61,6 +61,7 @@ class SensorData(db.Model):
 @app.route('/sensor', methods=['POST'])
 def receive_data():
     now = datetime.now().time()
+    now = time(now.hour, now.minute)
     start_time = time(6, 0)   # 06:00 Uhr
     end_time = time(19, 0)    # 19:00 Uhr
 
