@@ -7,8 +7,6 @@ import requests
 
 log_path = "log.txt"
 
-classroom = "undefined"
-
 arduino_to_room = {
     "Clara": "1.29",
     "Alina": "2.06"
@@ -22,19 +20,20 @@ def sende_discord_nachricht(text):
     if response.status_code != 204:
         print(f"Fehler beim Senden der Discord-Nachricht: {response.status_code} - {response.text}")
 
-def sende_db_discord():
-    payload = {'upload_file': open('instance/sensor_data.db', 'rb')}
-    response = requests.post(WEBHOOK_URL, files=payload)
-    if response.status_code != 204:
-        print(f"Fehler beim Senden der DB über Discord: {response.status_code} - {response.text}")
-
-
 def log(msg: str):
     current_datetime = datetime.now()
     with open(log_path, "a") as file:
         file.write(f"\n[PARSER] [{current_datetime}]  "+msg)
     print(f"\n[PARSER] [{current_datetime}]  "+msg)
 
+def sende_db_discord():
+    payload = {'upload_file': open('instance/sensor_data.db', 'rb')}
+    response = requests.post(WEBHOOK_URL, files=payload)
+    if response.status_code != 204:
+        log(f"Fehler beim Senden der DB über Discord: {response.status_code} - {response.text}")
+        sende_discord_nachricht(f"Fehler beim Senden der DB über Discord: {response.status_code} - {response.text}")
+
+# Setup stuff
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sensor_data.db'
@@ -56,27 +55,25 @@ class SensorData(db.Model):
     class_room = db.Column(db.String(50), nullable=False)
     log("setup database")
 
+booli_the_boolean = False
 
-
+# Receive data 
 @app.route('/sensor', methods=['POST'])
 def receive_data():
     now = datetime.now().time()
     now = time(now.hour, now.minute)
-    start_time = time(6, 0)   # 06:00 Uhr
-    end_time = time(19, 0)    # 19:00 Uhr
 
     log(f"request to save data received from {request.remote_addr}")
-    if not (start_time <= now <= end_time):
-        if now >= time(5, 55) and now <= time(5, 57):
-            sende_discord_nachricht("Cheduled rebbot. Rebooting...")
-            os.system("sudo reboot")
-
-    if now == time(13, 56):
+    if now >= time(5, 55) and now <= time(5, 57): # Cheduled reboot
+        sende_discord_nachricht("Cheduled rebbot. Rebooting...")
+        os.system("sudo reboot")
+    elif now == time(13, 56):
         sende_discord_nachricht("Cheduled update: still running and recieving data")
-
-    if now == time(17, 55):
+    elif now == time(17, 55):
         sende_db_discord()
         sende_discord_nachricht("Cheduled data base sending ohhh yeah baby")
+    else:
+        booli_the_boolean = False
 
     data = request.get_json()
 
